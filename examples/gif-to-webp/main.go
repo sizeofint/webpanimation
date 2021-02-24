@@ -20,7 +20,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	webpanim := webpanimation.NewWebpAnimation(gif.Config.Width, gif.Config.Height, gif.LoopCount) // Create 500x500 animaton with loop count 2, pass 0 for endless loop
+	webpanim := webpanimation.NewWebpAnimation(gif.Config.Width, gif.Config.Height, gif.LoopCount)
 	webpanim.WebPAnimEncoderOptions.SetKmin(9)
 	webpanim.WebPAnimEncoderOptions.SetKmax(17)
 	defer webpanim.ReleaseMemory() // dont forget call this or you will have memory leaks
