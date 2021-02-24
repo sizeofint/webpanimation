@@ -33,9 +33,6 @@ func NewWebpAnimation(width, height, loopCount int) *webpAnimation {
 
 	WebPAnimEncoderOptionsInitInternal(webpAnimation.WebPAnimEncoderOptions)
 
-	webpAnimation.WebPAnimEncoderOptions.SetKmin(9)
-	webpAnimation.WebPAnimEncoderOptions.SetKmax(17)
-
 	webpAnimation.AnimationEncoder = WebPAnimEncoderNewInternal(width, height, webpAnimation.WebPAnimEncoderOptions)
 	return webpAnimation
 }
