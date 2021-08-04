@@ -50,10 +50,15 @@ func (wpa *webpAnimation) ReleaseMemory() {
 // AddFrame add frame to animation
 func (wpa *webpAnimation) AddFrame(img image.Image, timestamp int, webPConfig *webPConfig) error {
 	var webPPicture *WebPPicture = nil
+	var m *image.RGBA
 	if img != nil {
-		b := img.Bounds()
-		m := image.NewRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
-		draw.Draw(m, m.Bounds(), img, b.Min, draw.Src)
+		if v, ok := img.(*image.RGBA); ok {
+			m = v
+		} else {
+			b := img.Bounds()
+			m = image.NewRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))
+			draw.Draw(m, m.Bounds(), img, b.Min, draw.Src)
+		}
 
 		webPPicture = &WebPPicture{}
 		wpa.WebPPictures = append(wpa.WebPPictures, webPPicture)
