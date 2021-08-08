@@ -8,7 +8,7 @@ import (
 	"io"
 )
 
-type webpAnimation struct {
+type WebpAnimation struct {
 	WebPAnimEncoderOptions *WebPAnimEncoderOptions
 	Width                  int
 	Height                 int
@@ -20,8 +20,8 @@ type webpAnimation struct {
 }
 
 // NewWebpAnimation Initialize animation
-func NewWebpAnimation(width, height, loopCount int) *webpAnimation {
-	webpAnimation := &webpAnimation{loopCount: loopCount, Width: width, Height: height}
+func NewWebpAnimation(width, height, loopCount int) *WebpAnimation {
+	webpAnimation := &WebpAnimation{loopCount: loopCount, Width: width, Height: height}
 	webpAnimation.WebPAnimEncoderOptions = &WebPAnimEncoderOptions{}
 
 	WebPAnimEncoderOptionsInitInternal(webpAnimation.WebPAnimEncoderOptions)
@@ -31,7 +31,7 @@ func NewWebpAnimation(width, height, loopCount int) *webpAnimation {
 }
 
 // ReleaseMemory release memory
-func (wpa *webpAnimation) ReleaseMemory() {
+func (wpa *WebpAnimation) ReleaseMemory() {
 	WebPDataClear(wpa.WebPData)
 	WebPMuxDelete(wpa.WebPMux)
 	for _, webpPicture := range wpa.WebPPictures {
@@ -41,7 +41,7 @@ func (wpa *webpAnimation) ReleaseMemory() {
 }
 
 // AddFrame add frame to animation
-func (wpa *webpAnimation) AddFrame(img image.Image, timestamp int, webpcfg WebPConfig) error {
+func (wpa *WebpAnimation) AddFrame(img image.Image, timestamp int, webpcfg WebPConfig) error {
 	var webPPicture *WebPPicture = nil
 	var m *image.RGBA
 	if img != nil {
@@ -72,7 +72,7 @@ func (wpa *webpAnimation) AddFrame(img image.Image, timestamp int, webpcfg WebPC
 }
 
 // Encode encode animation
-func (wpa *webpAnimation) Encode(w io.Writer) error {
+func (wpa *WebpAnimation) Encode(w io.Writer) error {
 	wpa.WebPData = &WebPData{}
 
 	WebPDataInit(wpa.WebPData)
