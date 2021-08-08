@@ -1,13 +1,11 @@
 package webpanimation
 
 /*
-#cgo CFLAGS: -I./internal/libwebp-1.1/
-#cgo CFLAGS: -I./internal/libwebp-1.1/src/
-#cgo CFLAGS: -Wno-pointer-sign -DWEBP_USE_THREAD
+#cgo CFLAGS: -Wno-pointer-sign -DHAVE_CONFIG_H
 #cgo !windows LDFLAGS: -lm
 
-#include <webp/encode.h>
-#include <webp/mux.h>
+#include "webp_encode.h"
+#include "webp_mux.h"
 */
 import "C"
 import (
