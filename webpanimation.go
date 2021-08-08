@@ -19,13 +19,6 @@ type webpAnimation struct {
 	WebPPictures           []*WebPPicture
 }
 
-// NewWebpConfig create webpconfig instance
-func NewWebpConfig() *webPConfig {
-	webPConfig := &webPConfig{}
-	WebPConfigInitInternal(webPConfig)
-	return webPConfig
-}
-
 // NewWebpAnimation Initialize animation
 func NewWebpAnimation(width, height, loopCount int) *webpAnimation {
 	webpAnimation := &webpAnimation{loopCount: loopCount, Width: width, Height: height}
@@ -48,7 +41,7 @@ func (wpa *webpAnimation) ReleaseMemory() {
 }
 
 // AddFrame add frame to animation
-func (wpa *webpAnimation) AddFrame(img image.Image, timestamp int, webPConfig *webPConfig) error {
+func (wpa *webpAnimation) AddFrame(img image.Image, timestamp int, webpcfg WebPConfig) error {
 	var webPPicture *WebPPicture = nil
 	var m *image.RGBA
 	if img != nil {
@@ -71,7 +64,7 @@ func (wpa *webpAnimation) AddFrame(img image.Image, timestamp int, webPConfig *w
 		}
 	}
 
-	res := WebPAnimEncoderAdd(wpa.AnimationEncoder, webPPicture, timestamp, webPConfig)
+	res := WebPAnimEncoderAdd(wpa.AnimationEncoder, webPPicture, timestamp, webpcfg)
 	if res == 0 {
 		return errors.New("Failed to add frame in animation ecoder")
 	}
