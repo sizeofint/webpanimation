@@ -1,13 +1,11 @@
 package webpanimation
 
 /*
-#cgo CFLAGS: -I./internal/libwebp-1.1/
-#cgo CFLAGS: -I./internal/libwebp-1.1/src/
-#cgo CFLAGS: -Wno-pointer-sign -DWEBP_USE_THREAD
+#cgo CFLAGS: -Wno-pointer-sign -DHAVE_CONFIG_H
 #cgo !windows LDFLAGS: -lm
 
-#include <webp/encode.h>
-#include <webp/mux.h>
+#include "webp_encode.h"
+#include "webp_mux.h"
 */
 import "C"
 import (
@@ -37,7 +35,41 @@ type WebPAnimEncoderOptions C.WebPAnimEncoderOptions
 type WebPData C.WebPData
 type WebPMux C.WebPMux
 type WebPMuxAnimParams C.WebPMuxAnimParams
-type webPConfig C.WebPConfig
+type webPConfig struct {
+	webpConfig *C.WebPConfig
+}
+
+type WebPConfig interface {
+	getRawPointer() *C.WebPConfig
+	SetLossless(v int)
+	GetLossless() int
+	SetMethod(v int)
+	SetImageHint(v int)
+	SetTargetSize(v int)
+	SetTargetPSNR(v float32)
+	SetSegments(v int)
+	SetSnsStrength(v int)
+	SetFilterStrength(v int)
+	SetFilterSharpness(v int)
+	SetAutofilter(v int)
+	SetAlphaCompression(v int)
+	SetAlphaFiltering(v int)
+	SetPass(v int)
+	SetShowCompressed(v int)
+	SetPreprocessing(v int)
+	SetPartitions(v int)
+	SetPartitionLimit(v int)
+	SetEmulateJpegSize(v int)
+	SetThreadLevel(v int)
+	SetLowMemory(v int)
+	SetNearLossless(v int)
+	SetExact(v int)
+	SetUseDeltaPalette(v int)
+	SetUseSharpYuv(v int)
+	SetAlphaQuality(v int)
+	SetFilterType(v int)
+	SetQuality(v float32)
+}
 
 func WebPDataClear(webPData *WebPData) {
 	C.WebPDataClear((*C.WebPData)(unsafe.Pointer(webPData)))
@@ -95,125 +127,137 @@ func WebPDataInit(webPData *WebPData) {
 	C.WebPDataInit((*C.WebPData)(unsafe.Pointer(webPData)))
 }
 
-func WebPConfigInitInternal(config *webPConfig) int {
+// NewWebpConfig create webpconfig instance
+func NewWebpConfig() WebPConfig {
+	webpcfg := &webPConfig{}
+	webpcfg.webpConfig = &C.WebPConfig{}
+	WebPConfigInitInternal(webpcfg)
+	return webpcfg
+}
+
+func WebPConfigInitInternal(config WebPConfig) int {
 	return int(C.WebPConfigInitInternal(
-		(*C.WebPConfig)(unsafe.Pointer(config)),
+		config.getRawPointer(),
 		(C.WebPPreset)(0),
 		(C.float)(75.0),
 		(C.int)(WebpEncoderAbiVersion),
 	))
 }
 
-func (webpCfg *webPConfig) SetLossless(v int) {
-	((*C.WebPConfig)(webpCfg)).lossless = (C.int)(v)
+func (webpCfg *webPConfig) getRawPointer() *C.WebPConfig {
+	return webpCfg.webpConfig
 }
 
-func (webpCfg webPConfig) GetLossless() int {
-	return int(((C.WebPConfig)(webpCfg)).lossless)
+func (webpCfg *webPConfig) SetLossless(v int) {
+	webpCfg.webpConfig.lossless = (C.int)(v)
+}
+
+func (webpCfg *webPConfig) GetLossless() int {
+	return int(webpCfg.webpConfig.lossless)
 }
 
 func (webpCfg *webPConfig) SetMethod(v int) {
-	((*C.WebPConfig)(webpCfg)).method = (C.int)(v)
+	webpCfg.webpConfig.method = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetImageHint(v int) {
-	((*C.WebPConfig)(webpCfg)).image_hint = (C.WebPImageHint)(v)
+	webpCfg.webpConfig.image_hint = (C.WebPImageHint)(v)
 }
 
 func (webpCfg *webPConfig) SetTargetSize(v int) {
-	((*C.WebPConfig)(webpCfg)).target_size = (C.int)(v)
+	webpCfg.webpConfig.target_size = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetTargetPSNR(v float32) {
-	((*C.WebPConfig)(webpCfg)).target_PSNR = (C.float)(v)
+	webpCfg.webpConfig.target_PSNR = (C.float)(v)
 }
 
 func (webpCfg *webPConfig) SetSegments(v int) {
-	((*C.WebPConfig)(webpCfg)).segments = (C.int)(v)
+	webpCfg.webpConfig.segments = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetSnsStrength(v int) {
-	((*C.WebPConfig)(webpCfg)).sns_strength = (C.int)(v)
+	webpCfg.webpConfig.sns_strength = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetFilterStrength(v int) {
-	((*C.WebPConfig)(webpCfg)).filter_strength = (C.int)(v)
+	webpCfg.webpConfig.filter_strength = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetFilterSharpness(v int) {
-	((*C.WebPConfig)(webpCfg)).filter_sharpness = (C.int)(v)
+	webpCfg.webpConfig.filter_sharpness = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetAutofilter(v int) {
-	((*C.WebPConfig)(webpCfg)).autofilter = (C.int)(v)
+	webpCfg.webpConfig.autofilter = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetAlphaCompression(v int) {
-	((*C.WebPConfig)(webpCfg)).alpha_compression = (C.int)(v)
+	webpCfg.webpConfig.alpha_compression = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetAlphaFiltering(v int) {
-	((*C.WebPConfig)(webpCfg)).alpha_filtering = (C.int)(v)
+	webpCfg.webpConfig.alpha_filtering = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetPass(v int) {
-	((*C.WebPConfig)(webpCfg)).pass = (C.int)(v)
+	webpCfg.webpConfig.pass = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetShowCompressed(v int) {
-	((*C.WebPConfig)(webpCfg)).show_compressed = (C.int)(v)
+	webpCfg.webpConfig.show_compressed = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetPreprocessing(v int) {
-	((*C.WebPConfig)(webpCfg)).preprocessing = (C.int)(v)
+	webpCfg.webpConfig.preprocessing = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetPartitions(v int) {
-	((*C.WebPConfig)(webpCfg)).partitions = (C.int)(v)
+	webpCfg.webpConfig.partitions = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetPartitionLimit(v int) {
-	((*C.WebPConfig)(webpCfg)).partition_limit = (C.int)(v)
+	webpCfg.webpConfig.partition_limit = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetEmulateJpegSize(v int) {
-	((*C.WebPConfig)(webpCfg)).emulate_jpeg_size = (C.int)(v)
+	webpCfg.webpConfig.emulate_jpeg_size = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetThreadLevel(v int) {
-	((*C.WebPConfig)(webpCfg)).thread_level = (C.int)(v)
+	webpCfg.webpConfig.thread_level = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetLowMemory(v int) {
-	((*C.WebPConfig)(webpCfg)).low_memory = (C.int)(v)
+	webpCfg.webpConfig.low_memory = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetNearLossless(v int) {
-	((*C.WebPConfig)(webpCfg)).near_lossless = (C.int)(v)
+	webpCfg.webpConfig.near_lossless = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetExact(v int) {
-	((*C.WebPConfig)(webpCfg)).exact = (C.int)(v)
+	webpCfg.webpConfig.exact = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetUseDeltaPalette(v int) {
-	((*C.WebPConfig)(webpCfg)).use_delta_palette = (C.int)(v)
+	webpCfg.webpConfig.use_delta_palette = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetUseSharpYuv(v int) {
-	((*C.WebPConfig)(webpCfg)).use_sharp_yuv = (C.int)(v)
+	webpCfg.webpConfig.use_sharp_yuv = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetAlphaQuality(v int) {
-	((*C.WebPConfig)(webpCfg)).alpha_quality = (C.int)(v)
+	webpCfg.webpConfig.alpha_quality = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetFilterType(v int) {
-	((*C.WebPConfig)(webpCfg)).filter_type = (C.int)(v)
+	webpCfg.webpConfig.filter_type = (C.int)(v)
 }
 
 func (webpCfg *webPConfig) SetQuality(v float32) {
-	((*C.WebPConfig)(webpCfg)).quality = (C.float)(v)
+	webpCfg.webpConfig.quality = (C.float)(v)
 }
 
 func (encOptions *WebPAnimEncoderOptions) GetAnimParams() WebPMuxAnimParams {
@@ -272,12 +316,12 @@ func WebPAnimEncoderNewInternal(width, height int, webPAnimEncoderOptions *WebPA
 	))
 }
 
-func WebPAnimEncoderAdd(webPAnimEncoder *WebPAnimEncoder, webPPicture *WebPPicture, timestamp int, webPConfig *webPConfig) int {
+func WebPAnimEncoderAdd(webPAnimEncoder *WebPAnimEncoder, webPPicture *WebPPicture, timestamp int, webpcfg WebPConfig) int {
 	return int(C.WebPAnimEncoderAdd(
 		(*C.WebPAnimEncoder)(unsafe.Pointer(webPAnimEncoder)),
 		(*C.WebPPicture)(unsafe.Pointer(webPPicture)),
 		(C.int)(timestamp),
-		(*C.WebPConfig)(unsafe.Pointer(webPConfig)),
+		webpcfg.getRawPointer(),
 	))
 }
 
